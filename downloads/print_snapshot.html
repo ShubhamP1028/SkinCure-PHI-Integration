@@ -1,0 +1,971 @@
+<html lang="en"><head>
+<meta charset="utf-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=1af9a401-df26-45bb-a42d-2be8a5a37992
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathology_Results_Log</title>
+<style>
+  :root {
+    --purple: #5a2d82;
+    --purple-dark: #46206a;
+    --purple-light: #e6def0;
+    --tab-active: #d9d0e6;
+    --blue: #1f6fd1;
+    --border: #c9c9c9;
+    --text: #333;
+    --muted: #888;
+    --bg: #fff;
+    --panel: #f6f6f6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; color: var(--text); background: var(--bg); }
+  button { font-family: inherit; font-size: inherit; }
+
+  /* ---------- Header ---------- */
+  .header { display: flex; align-items: center; gap: 16px; padding: 8px 12px; border-bottom: 1px solid #ddd; min-height: 84px; }
+  .logo { display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid #ddd; min-width: 170px; height: 68px; }
+  .logo-mark { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8fd3e8, #3a9fc0); position: relative; }
+  .logo-mark::after { content: ""; position: absolute; inset: 9px; border: 3px solid #fff; border-radius: 50%; border-right-color: transparent; }
+  .logo-text { line-height: 1; }
+  .logo-text b { display: block; font-size: 22px; letter-spacing: 3px; font-weight: 300; color: #555; }
+  .logo-text small { display: block; font-size: 8px; letter-spacing: 3px; color: #777; margin-top: 3px; }
+  .search { position: relative; width: 320px; }
+  .search input { width: 100%; padding: 6px 28px 6px 10px; border: 1px solid var(--border); border-radius: 3px; }
+  .search::after { content: "▾"; position: absolute; right: 9px; top: 5px; color: #777; }
+  .icon-btn { width: 36px; height: 30px; border: 1px solid #cfc3e0; background: #ece6f5; border-radius: 3px; cursor: pointer; color: var(--purple); font-size: 16px; }
+  .header-right { margin-left: auto; text-align: right; }
+  .user-row { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .user-name { font-size: 20px; font-weight: 600; color: var(--purple); }
+  .header-right select { padding: 4px; border: 1px solid var(--border); color: #777; }
+  .links { margin-top: 4px; color: #444; }
+  .links a { color: #444; text-decoration: none; margin-left: 6px; }
+  .links a:hover { text-decoration: underline; }
+  .links .dot { margin-left: 6px; }
+  .alert { display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: #d42a2a; color: #fff; font-size: 10px; line-height: 13px; text-align: center; font-weight: 700; }
+
+  /* ---------- Main nav ---------- */
+  .main-nav { background: var(--purple); display: flex; flex-wrap: wrap; padding: 0 0 0 0; }
+  .main-nav a { position: relative; color: #fff; text-decoration: none; padding: 12px 11px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .main-nav a:hover { background: var(--purple-dark); }
+  .main-nav a.active { background: var(--purple-light); color: #333; }
+  .badge { position: absolute; top: 2px; right: -4px; background: #9b8bb4; color: #fff; font-size: 9px; padding: 1px 4px; border-radius: 8px; }
+  .nav-break { flex-basis: 100%; height: 0; }
+
+  /* ---------- Page ---------- */
+  .page { padding: 10px; }
+  .empty-page { padding: 40px; color: var(--muted); }
+  .sub-tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--purple); }
+  .sub-tabs button { padding: 8px 18px; border: 1px solid #ddd; border-bottom: none; background: #fff; cursor: pointer; border-radius: 3px 3px 0 0; color: #333; }
+  .sub-tabs button.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .panel { border: 1px solid #ddd; border-top: none; padding: 12px 10px; min-height: 300px; }
+  .inner-tabs { display: flex; gap: 4px; border-bottom: 1px solid #ccc; margin-bottom: 14px; }
+  .inner-tabs button { padding: 7px 18px; border: 1px solid #ccc; border-bottom: none; background: #fff; cursor: pointer; border-radius: 2px 2px 0 0; color: #333; margin-bottom: -1px; }
+  .inner-tabs button.active { background: var(--tab-active); border-color: #c4b8d6; }
+
+  /* ---------- Filter form ---------- */
+  .form-grid { display: grid; grid-template-columns: repeat(3, 228px); gap: 12px 18px; max-width: 740px; padding-left: 10px; }
+  .field label.lbl { display: block; font-weight: 600; margin-bottom: 5px; color: #333; }
+  .field input[type=text], .field select, .field .date-input { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 2px; color: #333; background: #fff; }
+  .field input::placeholder { color: #999; }
+  .inline-radio { font-weight: 400; margin-left: 10px; }
+  .inline-radio input { vertical-align: -2px; }
+  .facility-box { position: relative; }
+  .chips { min-height: 50px; border: 1px solid var(--border); border-radius: 2px; padding: 4px; cursor: text; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px; }
+  .chip { border: 1px solid #bbb; background: #f4f4f4; border-radius: 2px; padding: 2px 6px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
+  .chip span { color: #c33; cursor: pointer; font-weight: 700; }
+  .chips input { border: none; outline: none; flex: 1; min-width: 40px; font-size: 12px; padding: 3px; }
+  .dropdown { position: absolute; left: 0; right: 0; top: 100%; background: #fff; border: 1px solid #bbb; box-shadow: 0 2px 6px rgba(0,0,0,.15); z-index: 20; display: none; }
+  .dropdown.open { display: block; }
+  .dropdown div { padding: 5px 10px; cursor: pointer; }
+  .dropdown div:hover, .dropdown div.hl { background: var(--purple); color: #fff; }
+  .dropdown .none { color: var(--muted); cursor: default; }
+  .dropdown .none:hover { background: none; color: var(--muted); }
+  .date-row { display: flex; gap: 8px; }
+  .date-row select { width: 112px; flex: none; }
+  .date-row input { flex: 1; min-width: 0; padding: 5px 6px; border: 1px solid var(--border); border-radius: 2px; }
+  .span-row { grid-column: 1 / -1; }
+  .btn-row { display: flex; gap: 4px; margin-top: 6px; }
+  .btn-primary { background: var(--blue); color: #fff; border: 1px solid var(--blue); padding: 6px 12px; border-radius: 2px; cursor: pointer; }
+  .btn-primary:hover { background: #1859aa; }
+  .btn-outline { background: #fff; color: var(--blue); border: 1px solid var(--blue); padding: 6px 12px; border-radius: 2px; cursor: pointer; }
+
+  /* ---------- Toolbar + table ---------- */
+  .toolbar { display: flex; border: 1px solid #ddd; margin-top: 18px; background: #fafafa; }
+  .toolbar button { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: none; border-right: 1px solid #ddd; background: none; cursor: pointer; color: #333; }
+  .toolbar button:hover:not(:disabled) { background: #eee; }
+  .toolbar button:disabled { color: #aaa; cursor: default; }
+  .toolbar svg { width: 24px; height: 24px; }
+  .table-wrap { overflow-x: auto; border: 1px solid #ddd; border-top: none; }
+  table { border-collapse: collapse; width: 100%; min-width: 1400px; }
+  th { text-align: left; padding: 10px 8px; border-bottom: 2px solid #ccc; font-weight: 600; vertical-align: bottom; background: #fff; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable::after { content: " ⇅"; color: #aaa; font-size: 11px; }
+  th.sort-asc::after { content: " ▲"; color: #555; }
+  th.sort-desc::after { content: " ▼"; color: #555; }
+  td { padding: 9px 8px; border-bottom: 1px solid #e5e5e5; vertical-align: top; line-height: 1.4; }
+  tbody tr:nth-child(even) td { background: #fafafa; }
+  tbody tr:hover td { background: #f1ecf7; }
+  .pt-name { color: var(--blue); font-weight: 600; }
+  .pt-meta { color: #666; font-size: 12px; }
+  .flag { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 2px; display: inline-block; }
+  .flag-CANCEROUS { background: #fde3e3; color: #b11b1b; }
+  .flag-ATYPICAL { background: #fff1d6; color: #9a5b00; }
+  .flag-PRECANCEROUS { background: #fff8c9; color: #7d6a00; }
+  .flag-BENIGN { background: #e2f4e4; color: #1e6b2a; }
+  .notif + .notif { margin-top: 6px; }
+  .processed small { color: #1e6b2a; font-weight: 700; }
+  .result-summary { padding: 8px 2px; color: #555; }
+  .muted { color: var(--muted); }
+  .status-bar { position: fixed; left: 0; bottom: 0; background: #f0f0f0; border: 1px solid #ccc; font-size: 11px; padding: 2px 6px; color: #444; display: none; }
+  .print-title { display: none; }
+
+  /* ---------- Print: only the results table ---------- */
+  @page { size: landscape; margin: 10mm; }
+  @media print {
+    .header, .main-nav, .sub-tabs, .inner-tabs, #filterForm, .toolbar, .status-bar { display: none !important; }
+    body { font-size: 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { padding: 0; }
+    .panel { border: none; padding: 0; min-height: 0; }
+    .print-title { display: block; margin: 0 0 8px; }
+    .print-title h1 { font-size: 16px; margin: 0 0 2px; }
+    .print-title p { margin: 0; color: #555; font-size: 10px; }
+    .table-wrap { overflow: visible; border: none; }
+    table { min-width: 0; table-layout: auto; }
+    th, td { padding: 4px 4px; }
+    th { white-space: normal; border-bottom: 1.5px solid #888; }
+    th:first-child, td:first-child { display: none; }
+    th.sortable::after { content: none; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    tbody tr:nth-child(even) td { background: #f5f5f5; }
+    .result-summary { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Header ============ -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark"></div>
+    <div class="logo-text"><b>NORTHFIELD</b><small>DERMATOLOGY</small></div>
+  </div>
+  <div class="search"><input type="text" placeholder="Patient Search..." style=""></div>
+  <button class="icon-btn" title="Recent">⟲</button>
+  <div class="header-right">
+    <div class="user-row">
+      <span class="user-name">Dana Whitfield</span>
+      <select><option>Select Supervisor</option><option>Dr. Lindqvist</option><option>Dr. Hale</option></select>
+    </div>
+    <div class="links">
+      <a href="#">Help</a><span class="dot">•</span>
+      <a href="#">Feedback</a><span class="dot">•</span>
+      <a href="#">Scribe ▾</a><span class="dot">•</span>
+      <a href="#">Customer Portal ▾</a><span class="dot">•</span>
+      <a href="#">Preferences</a>
+    </div>
+    <div class="links">
+      <a href="#">My Account</a> <span class="alert">!</span> ▾ <span class="dot">•</span> <a href="#">Logout</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ Main navigation ============ -->
+<nav class="main-nav" id="mainNav">
+  <a data-page="home" class="">Home</a>
+  <a data-page="officeflow">Office Flow</a>
+  <a data-page="schedule">Schedule</a>
+  <a data-page="apptflow">Appt Flow</a>
+  <a data-page="tasks">Tasks</a>
+  <a data-page="patients">Patients</a>
+  <a data-page="rx">Rx</a>
+  <a data-page="mail">Mail</a>
+  <a data-page="docs">Document Mgmt</a>
+  <a data-page="orders">Orders<span class="badge">553</span></a>
+  <a data-page="pathlabs" class="active">Path / Labs</a>
+  <a data-page="radiology">Radiology / Other<span class="badge">33</span></a>
+  <a data-page="elab">eLab<span class="badge">7</span></a>
+  <a data-page="reminders">Reminders</a>
+  <a data-page="analytics">Analytics</a>
+  <span class="nav-break"></span>
+  <a data-page="telehealth">Telehealth</a>
+  <a data-page="inventory">Inventory</a>
+  <a data-page="financials">Financials</a>
+  <a data-page="quotes">Quotes</a>
+  <a data-page="recalls">Recalls</a>
+</nav>
+
+<main class="page">
+  <!-- Generic empty page (Home and every other top tab) -->
+  <section id="emptyPage" class="empty-page" hidden=""></section>
+
+  <!-- Path / Labs page -->
+  <section id="pathLabsPage">
+    <div class="sub-tabs" id="subTabs">
+      <button data-sub="path" class="active">Path</button>
+      <button data-sub="lab" class="">Lab</button>
+    </div>
+    <div class="panel">
+      <!-- Lab (default, empty) -->
+      <div id="labPane" hidden=""></div>
+
+      <!-- Path -->
+      <div id="pathPane">
+        <div class="inner-tabs" id="innerTabs">
+          <button data-inner="pending" class="">Pending Results</button>
+          <button data-inner="plan" class="active">Pending Plan Completion</button>
+          <button data-inner="completed">Completed</button>
+          <button data-inner="unresolved">Unresolved</button>
+        </div>
+
+        <div id="planPane">
+          <form id="filterForm" autocomplete="off">
+            <div class="form-grid">
+              <div class="field">
+                <label class="lbl" for="provider">Provider</label>
+                <input type="text" id="provider" placeholder="Last, First" style="">
+              </div>
+              <div class="field">
+                <label class="lbl" for="patient">Patient</label>
+                <input type="text" id="patient" placeholder="Last, First" style="">
+              </div>
+              <div></div>
+
+              <div class="field">
+                <label class="lbl">Facility:
+                  <label class="inline-radio"><input type="radio" name="facScope" value="preferred" style=""> Preferred</label>
+                  <label class="inline-radio"><input type="radio" name="facScope" value="all" checked="" style=""> All</label>
+                </label>
+                <div class="facility-box">
+                  <div class="chips" id="chips"><div class="chip">Northfield Dermatology &amp; Skin Surgery Center <span title="Remove">×</span></div><input type="text" id="facInput" style=""></div>
+                  <div class="dropdown" id="facDropdown"></div>
+                </div>
+              </div>
+              <div></div><div></div>
+
+              <div class="field">
+                <label class="lbl" for="location">Location</label>
+                <input type="text" id="location" placeholder="Any" style="">
+              </div>
+              <div class="field">
+                <label class="lbl" for="flag">Result Flag</label>
+                <select id="flag">
+                  <option value="">- Any -</option>
+                  <option>Benign</option>
+                  <option>Atypical</option>
+                  <option>Precancerous</option>
+                  <option selected="">Cancerous</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="lbl" for="dateOp">Entry Date</label>
+                <div class="date-row">
+                  <select id="dateOp"><option>BEFORE</option><option selected="">AFTER</option><option>ON</option></select>
+                  <input type="date" id="entryDate" value="2026-07-01" style="">
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="lbl" for="action">Action</label>
+                <input type="text" id="action" style="">
+              </div>
+              <div class="field">
+                <label class="lbl" for="plan">Plan</label>
+                <input type="text" id="plan" style="">
+              </div>
+              <div class="field">
+                <label class="lbl" for="comments">Comments</label>
+                <input type="text" id="comments" style="">
+              </div>
+
+              <div class="field">
+                <label class="lbl" for="workflow">Workflow State</label>
+                <select id="workflow">
+                  <option>- Any -</option>
+                  <option>Awaiting Review</option>
+                  <option>Plan Pending</option>
+                  <option>Patient Notified</option>
+                  <option>Scheduled</option>
+                </select>
+              </div>
+              <div></div><div></div>
+
+              <div class="field">
+                <label class="lbl" for="assigned">Result Assigned To</label>
+                <input type="text" id="assigned" placeholder="Staff or Group" style="">
+              </div>
+              <div></div><div></div>
+
+              <div class="span-row btn-row">
+                <button type="submit" class="btn-primary">Apply Filter</button>
+                <button type="button" class="btn-outline" id="clearBtn">Clear Filter</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="toolbar">
+            <button type="button" disabled="">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="13" height="16" rx="1"></rect><path d="M6 8h7M6 11h7M6 14h4"></path><rect x="17" y="7" width="4" height="10" rx="1"></rect></svg>
+              Log / Generate Notification for Patient
+            </button>
+            <button type="button" id="printBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9V3h12v6"></path><rect x="2" y="9" width="20" height="9" rx="1"></rect><rect x="6" y="14" width="12" height="7"></rect></svg>
+              Print Table
+            </button>
+            <button type="button" disabled="">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h9l5 5v13H5z"></path><path d="M14 3v5h5"></path><circle cx="16" cy="17" r="4"></circle><path d="M14 17h4M17 15.5l1.5 1.5-1.5 1.5"></path></svg>
+              Move to Unresolved
+            </button>
+          </div>
+          <div class="print-title">
+            <h1>Pathology Results Log</h1>
+            <p>Northfield Dermatology &amp; Skin Surgery Center | Results 07/06/2026 - 10/12/2026 | 17 results</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAll" style=""></th>
+                  <th class="sortable" data-sort="date">Date</th>
+                  <th class="sortable" data-sort="patient">Patient</th>
+                  <th>Facility</th>
+                  <th>Location</th>
+                  <th>Result</th>
+                  <th>Actions and<br>Plans</th>
+                  <th>Comments /<br>Assigned To</th>
+                  <th class="sortable" data-sort="flag">Flags</th>
+                  <th>Notifications</th>
+                  <th>Notes</th>
+                  <th>Patient<br>Portal</th>
+                  <th>Results<br>Processed</th>
+                  <th>Photos</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody">
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>10/12/2026</td>
+      <td><div class="pt-name">Whitaker, Margaret A.</div><div class="pt-meta">DOB 03/14/1952</div><div class="pt-meta">MRN NF-208341</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right nasal ala</td>
+      <td>Basal Cell Carcinoma, nodular type</td>
+      <td>Schedule: Mohs surgery consult</td>
+      <td>MOHS - Dr. Lindqvist</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 10/14/26 09:12 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">10/13/2026 11:05 AM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>10/09/2026</td>
+      <td><div class="pt-name">Delgado, Raymond J.</div><div class="pt-meta">DOB 07/22/1961</div><div class="pt-meta">MRN NF-199027</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left inferior central malar cheek</td>
+      <td>Squamous Cell Carcinoma in situ</td>
+      <td>Schedule: visit to recheck site and discuss options</td>
+      <td>SRT VS EXC VS MOHS</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 10/12/26 01:20 PM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">10/11/2026 12:40 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>10/06/2026</td>
+      <td><div class="pt-name">Chen, Lillian M.</div><div class="pt-meta">DOB 11/02/1988</div><div class="pt-meta">MRN NF-231556</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: mid upper back</td>
+      <td>Dysplastic Nevus with moderate atypia</td>
+      <td>Schedule: re-excision with 5 mm margins</td>
+      <td>RE-EXC - Hale</td>
+      <td><span class="flag flag-ATYPICAL">ATYPICAL</span></td>
+      <td><div class="notif">Free Form - Hale, Jordan - 10/08/26 10:47 AM</div></td>
+      <td>Pt prefers AM appt</td>
+      <td>Hide</td>
+      <td class="processed">10/07/2026 04:18 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>10/02/2026</td>
+      <td><div class="pt-name">Brennan, Thomas W.</div><div class="pt-meta">DOB 05/30/1947</div><div class="pt-meta">MRN NF-174480</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: vertex scalp</td>
+      <td>Hypertrophic Actinic Keratosis</td>
+      <td>Reassure: treat with LN2 at next visit</td>
+      <td>LN2 NEXT VISIT</td>
+      <td><span class="flag flag-PRECANCEROUS">PRECANCEROUS</span></td>
+      <td><div class="notif">Free Form - Okafor, Priya - 10/05/26 02:33 PM</div></td>
+      <td></td>
+      <td>Release</td>
+      <td class="processed">10/04/2026 09:50 AM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/28/2026</td>
+      <td><div class="pt-name">Novak, Sandra K.</div><div class="pt-meta">DOB 09/18/1970</div><div class="pt-meta">MRN NF-216903</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left lateral thigh</td>
+      <td>Seborrheic Keratosis, irritated</td>
+      <td>Reassure: benign, no further treatment</td>
+      <td></td>
+      <td><span class="flag flag-BENIGN">BENIGN</span></td>
+      <td><div class="notif">Free Form - Okafor, Priya - 09/30/26 11:02 AM</div></td>
+      <td></td>
+      <td>Release</td>
+      <td class="processed">09/29/2026 03:27 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/24/2026</td>
+      <td><div class="pt-name">Abernathy, Curtis L.</div><div class="pt-meta">DOB 01/09/1958</div><div class="pt-meta">MRN NF-188215</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right preauricular cheek</td>
+      <td>Basal Cell Carcinoma, superficial type</td>
+      <td>Schedule: ED&amp;C vs topical 5-FU</td>
+      <td>ED&amp;C VS 5-FU</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 09/26/26 09:41 AM</div><div class="notif">Free Form - Hale, Jordan - 09/29/26 03:15 PM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">09/25/2026 01:08 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/19/2026</td>
+      <td><div class="pt-name">Fitzgerald, Hannah R.</div><div class="pt-meta">DOB 06/04/1995</div><div class="pt-meta">MRN NF-240117</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left medial calf</td>
+      <td>Melanoma in situ, lentigo maligna type</td>
+      <td>Schedule: wide local excision, 5 mm margins</td>
+      <td>WLE - Dr. Lindqvist</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 09/21/26 10:20 AM</div></td>
+      <td>1st-degree relative hx MM</td>
+      <td>Hide</td>
+      <td class="processed">09/20/2026 05:44 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/15/2026</td>
+      <td><div class="pt-name">Ogunleye, Daniel T.</div><div class="pt-meta">DOB 12/11/1966</div><div class="pt-meta">MRN NF-201348</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right dorsal hand</td>
+      <td>Squamous Cell Carcinoma, well differentiated</td>
+      <td>Schedule: excision</td>
+      <td>EXC - Hale</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Hale, Jordan - 09/17/26 12:05 PM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">09/16/2026 10:31 AM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/10/2026</td>
+      <td><div class="pt-name">Larsen, Kristine E.</div><div class="pt-meta">DOB 04/27/1979</div><div class="pt-meta">MRN NF-226774</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left upper chest</td>
+      <td>Compound Nevus, benign</td>
+      <td>Reassure: benign</td>
+      <td></td>
+      <td><span class="flag flag-BENIGN">BENIGN</span></td>
+      <td><div class="notif">Free Form - Okafor, Priya - 09/12/26 08:58 AM</div></td>
+      <td></td>
+      <td>Release</td>
+      <td class="processed">09/11/2026 02:16 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>09/04/2026</td>
+      <td><div class="pt-name">Moreau, Gerald P.</div><div class="pt-meta">DOB 08/15/1950</div><div class="pt-meta">MRN NF-169952</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left helical rim</td>
+      <td>Squamous Cell Carcinoma, keratoacanthoma type</td>
+      <td>Schedule: Mohs surgery</td>
+      <td>MOHS - Dr. Lindqvist</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 09/08/26 09:30 AM</div></td>
+      <td>On anticoagulation</td>
+      <td>Hide</td>
+      <td class="processed">09/07/2026 11:52 AM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>08/29/2026</td>
+      <td><div class="pt-name">Patel, Anjali S.</div><div class="pt-meta">DOB 02/19/1983</div><div class="pt-meta">MRN NF-235609</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right flank</td>
+      <td>Dysplastic Nevus with mild atypia, margins clear</td>
+      <td>Reassure: margins clear</td>
+      <td></td>
+      <td><span class="flag flag-ATYPICAL">ATYPICAL</span></td>
+      <td><div class="notif">Free Form - Okafor, Priya - 08/31/26 01:47 PM</div></td>
+      <td></td>
+      <td>Release</td>
+      <td class="processed">08/30/2026 10:09 AM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>08/21/2026</td>
+      <td><div class="pt-name">Kowalski, Edward M.</div><div class="pt-meta">DOB 10/03/1944</div><div class="pt-meta">MRN NF-161237</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: mid forehead</td>
+      <td>Basal Cell Carcinoma, infiltrative type</td>
+      <td>Schedule: Mohs surgery</td>
+      <td>MOHS - Dr. Lindqvist</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 08/24/26 03:22 PM</div><div class="notif">Free Form - Hale, Jordan - 08/27/26 09:14 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">08/23/2026 12:37 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>08/14/2026</td>
+      <td><div class="pt-name">Sullivan, Rebecca J.</div><div class="pt-meta">DOB 07/07/1973</div><div class="pt-meta">MRN NF-212890</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left distal dorsal forearm</td>
+      <td>No Residual Squamous Cell Carcinoma in situ</td>
+      <td>Reassure: margins clear</td>
+      <td></td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 08/17/26 09:37 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">08/16/2026 02:45 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>08/07/2026</td>
+      <td><div class="pt-name">Ito, Kenji R.</div><div class="pt-meta">DOB 03/28/1964</div><div class="pt-meta">MRN NF-197561</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right superior shoulder</td>
+      <td>Atypical Intraepidermal Melanocytic Proliferation</td>
+      <td>Schedule: re-excision</td>
+      <td>RE-EXC - Hale</td>
+      <td><span class="flag flag-ATYPICAL">ATYPICAL</span></td>
+      <td><div class="notif">Free Form - Hale, Jordan - 08/10/26 11:28 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">08/09/2026 04:02 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>07/27/2026</td>
+      <td><div class="pt-name">Harrington, Paul D.</div><div class="pt-meta">DOB 09/12/1955</div><div class="pt-meta">MRN NF-183324</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: right dorsal index finger metacarpophalangeal joint</td>
+      <td>Squamous Cell Carcinoma in situ</td>
+      <td>Reassure: margins clear</td>
+      <td>NARROWLY EXCISED</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 07/31/26 12:01 PM</div><div class="notif">Free Form - Hale, Jordan - 08/10/26 11:34 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">07/30/2026 12:30 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>07/20/2026</td>
+      <td><div class="pt-name">Vasquez, Maria L.</div><div class="pt-meta">DOB 05/16/1991</div><div class="pt-meta">MRN NF-238845</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left lower abdomen</td>
+      <td>Dermatofibroma</td>
+      <td>Reassure: benign</td>
+      <td></td>
+      <td><span class="flag flag-BENIGN">BENIGN</span></td>
+      <td><div class="notif">Free Form - Okafor, Priya - 07/22/26 10:14 AM</div></td>
+      <td></td>
+      <td>Release</td>
+      <td class="processed">07/21/2026 03:51 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><input type="checkbox" class="row-check" style=""></td>
+      <td>07/06/2026</td>
+      <td><div class="pt-name">Bennett, Laura C.</div><div class="pt-meta">DOB 12/29/1968</div><div class="pt-meta">MRN NF-205412</div></td>
+      <td>Northfield Dermatology &amp; Skin Surgery Center</td>
+      <td>A: left superior upper back (Stitch at 12 o'clock)</td>
+      <td>No Residual Melanoma in situ</td>
+      <td>Reassure: margins clear</td>
+      <td>3 MO TB</td>
+      <td><span class="flag flag-CANCEROUS">CANCEROUS</span></td>
+      <td><div class="notif">Free Form - Ramos, Elena - 07/15/26 10:13 AM</div></td>
+      <td></td>
+      <td>Hide</td>
+      <td class="processed">07/09/2026 06:16 PM<br><small>FINAL</small></td>
+      <td></td>
+    </tr></tbody>
+            </table>
+          </div>
+          <div class="result-summary" id="summary">Showing 17 results · Results 07/06/2026 – 10/12/2026</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="status-bar" id="statusBar"></div>
+
+<script>
+// ---------------- Data (from Pathology_Results_Log.pdf) ----------------
+const FACILITY = "Northfield Dermatology & Skin Surgery Center";
+const RESULTS = [
+  { date: "10/12/2026", name: "Whitaker, Margaret A.", dob: "03/14/1952", mrn: "NF-208341", location: "A: right nasal ala", result: "Basal Cell Carcinoma, nodular type", plan: "Schedule: Mohs surgery consult", comments: "MOHS - Dr. Lindqvist", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 10/14/26 09:12 AM"], notes: "", portal: "Hide", processed: "10/13/2026 11:05 AM", status: "FINAL" },
+  { date: "10/09/2026", name: "Delgado, Raymond J.", dob: "07/22/1961", mrn: "NF-199027", location: "A: left inferior central malar cheek", result: "Squamous Cell Carcinoma in situ", plan: "Schedule: visit to recheck site and discuss options", comments: "SRT VS EXC VS MOHS", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 10/12/26 01:20 PM"], notes: "", portal: "Hide", processed: "10/11/2026 12:40 PM", status: "FINAL" },
+  { date: "10/06/2026", name: "Chen, Lillian M.", dob: "11/02/1988", mrn: "NF-231556", location: "A: mid upper back", result: "Dysplastic Nevus with moderate atypia", plan: "Schedule: re-excision with 5 mm margins", comments: "RE-EXC - Hale", flag: "ATYPICAL", notifications: ["Free Form - Hale, Jordan - 10/08/26 10:47 AM"], notes: "Pt prefers AM appt", portal: "Hide", processed: "10/07/2026 04:18 PM", status: "FINAL" },
+  { date: "10/02/2026", name: "Brennan, Thomas W.", dob: "05/30/1947", mrn: "NF-174480", location: "A: vertex scalp", result: "Hypertrophic Actinic Keratosis", plan: "Reassure: treat with LN2 at next visit", comments: "LN2 NEXT VISIT", flag: "PRECANCEROUS", notifications: ["Free Form - Okafor, Priya - 10/05/26 02:33 PM"], notes: "", portal: "Release", processed: "10/04/2026 09:50 AM", status: "FINAL" },
+  { date: "09/28/2026", name: "Novak, Sandra K.", dob: "09/18/1970", mrn: "NF-216903", location: "A: left lateral thigh", result: "Seborrheic Keratosis, irritated", plan: "Reassure: benign, no further treatment", comments: "", flag: "BENIGN", notifications: ["Free Form - Okafor, Priya - 09/30/26 11:02 AM"], notes: "", portal: "Release", processed: "09/29/2026 03:27 PM", status: "FINAL" },
+  { date: "09/24/2026", name: "Abernathy, Curtis L.", dob: "01/09/1958", mrn: "NF-188215", location: "A: right preauricular cheek", result: "Basal Cell Carcinoma, superficial type", plan: "Schedule: ED&C vs topical 5-FU", comments: "ED&C VS 5-FU", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 09/26/26 09:41 AM", "Free Form - Hale, Jordan - 09/29/26 03:15 PM"], notes: "", portal: "Hide", processed: "09/25/2026 01:08 PM", status: "FINAL" },
+  { date: "09/19/2026", name: "Fitzgerald, Hannah R.", dob: "06/04/1995", mrn: "NF-240117", location: "A: left medial calf", result: "Melanoma in situ, lentigo maligna type", plan: "Schedule: wide local excision, 5 mm margins", comments: "WLE - Dr. Lindqvist", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 09/21/26 10:20 AM"], notes: "1st-degree relative hx MM", portal: "Hide", processed: "09/20/2026 05:44 PM", status: "FINAL" },
+  { date: "09/15/2026", name: "Ogunleye, Daniel T.", dob: "12/11/1966", mrn: "NF-201348", location: "A: right dorsal hand", result: "Squamous Cell Carcinoma, well differentiated", plan: "Schedule: excision", comments: "EXC - Hale", flag: "CANCEROUS", notifications: ["Free Form - Hale, Jordan - 09/17/26 12:05 PM"], notes: "", portal: "Hide", processed: "09/16/2026 10:31 AM", status: "FINAL" },
+  { date: "09/10/2026", name: "Larsen, Kristine E.", dob: "04/27/1979", mrn: "NF-226774", location: "A: left upper chest", result: "Compound Nevus, benign", plan: "Reassure: benign", comments: "", flag: "BENIGN", notifications: ["Free Form - Okafor, Priya - 09/12/26 08:58 AM"], notes: "", portal: "Release", processed: "09/11/2026 02:16 PM", status: "FINAL" },
+  { date: "09/04/2026", name: "Moreau, Gerald P.", dob: "08/15/1950", mrn: "NF-169952", location: "A: left helical rim", result: "Squamous Cell Carcinoma, keratoacanthoma type", plan: "Schedule: Mohs surgery", comments: "MOHS - Dr. Lindqvist", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 09/08/26 09:30 AM"], notes: "On anticoagulation", portal: "Hide", processed: "09/07/2026 11:52 AM", status: "FINAL" },
+  { date: "08/29/2026", name: "Patel, Anjali S.", dob: "02/19/1983", mrn: "NF-235609", location: "A: right flank", result: "Dysplastic Nevus with mild atypia, margins clear", plan: "Reassure: margins clear", comments: "", flag: "ATYPICAL", notifications: ["Free Form - Okafor, Priya - 08/31/26 01:47 PM"], notes: "", portal: "Release", processed: "08/30/2026 10:09 AM", status: "FINAL" },
+  { date: "08/21/2026", name: "Kowalski, Edward M.", dob: "10/03/1944", mrn: "NF-161237", location: "A: mid forehead", result: "Basal Cell Carcinoma, infiltrative type", plan: "Schedule: Mohs surgery", comments: "MOHS - Dr. Lindqvist", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 08/24/26 03:22 PM", "Free Form - Hale, Jordan - 08/27/26 09:14 AM"], notes: "", portal: "Hide", processed: "08/23/2026 12:37 PM", status: "FINAL" },
+  { date: "08/14/2026", name: "Sullivan, Rebecca J.", dob: "07/07/1973", mrn: "NF-212890", location: "A: left distal dorsal forearm", result: "No Residual Squamous Cell Carcinoma in situ", plan: "Reassure: margins clear", comments: "", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 08/17/26 09:37 AM"], notes: "", portal: "Hide", processed: "08/16/2026 02:45 PM", status: "FINAL" },
+  { date: "08/07/2026", name: "Ito, Kenji R.", dob: "03/28/1964", mrn: "NF-197561", location: "A: right superior shoulder", result: "Atypical Intraepidermal Melanocytic Proliferation", plan: "Schedule: re-excision", comments: "RE-EXC - Hale", flag: "ATYPICAL", notifications: ["Free Form - Hale, Jordan - 08/10/26 11:28 AM"], notes: "", portal: "Hide", processed: "08/09/2026 04:02 PM", status: "FINAL" },
+  { date: "07/27/2026", name: "Harrington, Paul D.", dob: "09/12/1955", mrn: "NF-183324", location: "A: right dorsal index finger metacarpophalangeal joint", result: "Squamous Cell Carcinoma in situ", plan: "Reassure: margins clear", comments: "NARROWLY EXCISED", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 07/31/26 12:01 PM", "Free Form - Hale, Jordan - 08/10/26 11:34 AM"], notes: "", portal: "Hide", processed: "07/30/2026 12:30 PM", status: "FINAL" },
+  { date: "07/20/2026", name: "Vasquez, Maria L.", dob: "05/16/1991", mrn: "NF-238845", location: "A: left lower abdomen", result: "Dermatofibroma", plan: "Reassure: benign", comments: "", flag: "BENIGN", notifications: ["Free Form - Okafor, Priya - 07/22/26 10:14 AM"], notes: "", portal: "Release", processed: "07/21/2026 03:51 PM", status: "FINAL" },
+  { date: "07/06/2026", name: "Bennett, Laura C.", dob: "12/29/1968", mrn: "NF-205412", location: "A: left superior upper back (Stitch at 12 o'clock)", result: "No Residual Melanoma in situ", plan: "Reassure: margins clear", comments: "3 MO TB", flag: "CANCEROUS", notifications: ["Free Form - Ramos, Elena - 07/15/26 10:13 AM"], notes: "", portal: "Hide", processed: "07/09/2026 06:16 PM", status: "FINAL" },
+];
+const FACILITIES = [FACILITY, "Northfield Medical - Lockbox", "TELEHEALTH - Northfield Dermatology"];
+const FLAG_ORDER = { CANCEROUS: 0, ATYPICAL: 1, PRECANCEROUS: 2, BENIGN: 3 };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function setActive(container, el) {
+  container.querySelectorAll(".active").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// ---------------- Top navigation ----------------
+$("mainNav").addEventListener("click", e => {
+  const link = e.target.closest("a[data-page]");
+  if (!link) return;
+  setActive($("mainNav"), link);
+  const isPathLabs = link.dataset.page === "pathlabs";
+  $("pathLabsPage").hidden = !isPathLabs;
+  $("emptyPage").hidden = isPathLabs;
+  if (isPathLabs) showSub("lab"); // Lab opens by default
+});
+
+// ---------------- Path / Lab tabs ----------------
+function showSub(sub) {
+  setActive($("subTabs"), $("subTabs").querySelector(`[data-sub="${sub}"]`));
+  $("labPane").hidden = sub !== "lab";
+  $("pathPane").hidden = sub !== "path";
+  if (sub === "path") showInner("pending"); // Pending Results opens by default
+}
+$("subTabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-sub]");
+  if (b) showSub(b.dataset.sub);
+});
+
+function showInner(inner) {
+  setActive($("innerTabs"), $("innerTabs").querySelector(`[data-inner="${inner}"]`));
+  $("planPane").hidden = inner !== "plan";
+}
+$("innerTabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-inner]");
+  if (b) showInner(b.dataset.inner);
+});
+
+// ---------------- Facility multi-select ----------------
+let selectedFacilities = [FACILITY];
+let hlIndex = 0;
+
+function renderChips() {
+  const chips = $("chips");
+  chips.querySelectorAll(".chip").forEach(c => c.remove());
+  selectedFacilities.forEach(f => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerHTML = `${esc(f)} <span title="Remove">×</span>`;
+    chip.querySelector("span").onclick = ev => {
+      ev.stopPropagation();
+      selectedFacilities = selectedFacilities.filter(x => x !== f);
+      renderChips();
+      renderDropdown();
+    };
+    chips.insertBefore(chip, $("facInput"));
+  });
+}
+function availableFacilities() {
+  const q = $("facInput").value.trim().toLowerCase();
+  return FACILITIES.filter(f => !selectedFacilities.includes(f) && f.toLowerCase().includes(q));
+}
+function renderDropdown() {
+  const dd = $("facDropdown");
+  const opts = availableFacilities();
+  hlIndex = Math.min(hlIndex, Math.max(opts.length - 1, 0));
+  dd.innerHTML = opts.length
+    ? opts.map((f, i) => `<div data-f="${esc(f)}" class="${i === hlIndex ? "hl" : ""}">${esc(f)}</div>`).join("")
+    : `<div class="none">No more facilities</div>`;
+}
+function addFacility(f) {
+  selectedFacilities.push(f);
+  $("facInput").value = "";
+  renderChips();
+  renderDropdown();
+}
+$("chips").addEventListener("click", () => $("facInput").focus());
+$("facInput").addEventListener("focus", () => { renderDropdown(); $("facDropdown").classList.add("open"); });
+$("facInput").addEventListener("input", () => { hlIndex = 0; renderDropdown(); $("facDropdown").classList.add("open"); });
+$("facInput").addEventListener("keydown", e => {
+  const opts = availableFacilities();
+  if (e.key === "ArrowDown") { hlIndex = Math.min(hlIndex + 1, opts.length - 1); renderDropdown(); e.preventDefault(); }
+  else if (e.key === "ArrowUp") { hlIndex = Math.max(hlIndex - 1, 0); renderDropdown(); e.preventDefault(); }
+  else if (e.key === "Enter") { e.preventDefault(); if (opts[hlIndex]) addFacility(opts[hlIndex]); }
+  else if (e.key === "Backspace" && !e.target.value && selectedFacilities.length) { selectedFacilities.pop(); renderChips(); renderDropdown(); }
+  else if (e.key === "Escape") $("facDropdown").classList.remove("open");
+});
+$("facDropdown").addEventListener("mousedown", e => {
+  const opt = e.target.closest("[data-f]");
+  e.preventDefault(); // keep focus in input
+  if (opt) addFacility(opt.dataset.f);
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest(".facility-box")) $("facDropdown").classList.remove("open");
+});
+
+// ---------------- Results table ----------------
+// The filter always shows the full log, regardless of the selections made.
+let rows = [];
+let sortKey = null, sortDir = 1;
+
+const sortValue = {
+  date: r => r.date.slice(6) + r.date.slice(0, 2) + r.date.slice(3, 5),
+  patient: r => r.name.toLowerCase(),
+  flag: r => FLAG_ORDER[r.flag],
+};
+
+function renderTable() {
+  const data = [...rows];
+  if (sortKey) data.sort((a, b) => (sortValue[sortKey](a) > sortValue[sortKey](b) ? 1 : -1) * sortDir);
+  $("resultsBody").innerHTML = data.map(r => `
+    <tr>
+      <td><input type="checkbox" class="row-check"></td>
+      <td>${esc(r.date)}</td>
+      <td><div class="pt-name">${esc(r.name)}</div><div class="pt-meta">DOB ${esc(r.dob)}</div><div class="pt-meta">MRN ${esc(r.mrn)}</div></td>
+      <td>${esc(FACILITY)}</td>
+      <td>${esc(r.location)}</td>
+      <td>${esc(r.result)}</td>
+      <td>${esc(r.plan)}</td>
+      <td>${esc(r.comments)}</td>
+      <td><span class="flag flag-${r.flag}">${r.flag}</span></td>
+      <td>${r.notifications.map(n => `<div class="notif">${esc(n)}</div>`).join("")}</td>
+      <td>${esc(r.notes)}</td>
+      <td>${esc(r.portal)}</td>
+      <td class="processed">${esc(r.processed)}<br><small>${esc(r.status)}</small></td>
+      <td></td>
+    </tr>`).join("");
+  document.querySelectorAll("th.sortable").forEach(th => {
+    th.classList.toggle("sort-asc", th.dataset.sort === sortKey && sortDir === 1);
+    th.classList.toggle("sort-desc", th.dataset.sort === sortKey && sortDir === -1);
+  });
+  $("summary").textContent = rows.length
+    ? `Showing ${rows.length} results · Results 07/06/2026 – 10/12/2026`
+    : "";
+  $("printBtn").disabled = rows.length === 0;
+  $("selectAll").checked = false;
+}
+
+document.querySelectorAll("th.sortable").forEach(th => th.addEventListener("click", () => {
+  if (!rows.length) return;
+  sortDir = sortKey === th.dataset.sort ? -sortDir : 1;
+  sortKey = th.dataset.sort;
+  renderTable();
+}));
+$("selectAll").addEventListener("change", e => {
+  document.querySelectorAll(".row-check").forEach(c => c.checked = e.target.checked);
+});
+
+$("filterForm").addEventListener("submit", e => {
+  e.preventDefault();
+  rows = RESULTS;
+  renderTable();
+});
+
+$("clearBtn").addEventListener("click", () => {
+  $("filterForm").reset();
+  selectedFacilities = [FACILITY];
+  renderChips();
+  rows = [];
+  sortKey = null;
+  renderTable();
+});
+
+// ---------------- Print Table -> browser print dialog (Save as PDF) ----------------
+$("printBtn").addEventListener("click", () => {
+  const prevTitle = document.title;
+  document.title = "Pathology_Results_Log"; // default file name when saving as PDF
+  window.print();
+  document.title = prevTitle;
+});
+
+// ---------------- Init ----------------
+renderChips();
+renderTable();
+</script>
+
+
+<script async="" src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="1af9a401-df26-45bb-a42d-2be8a5a37992" data-app-host="app.netlify.com" data-account-tier="free"></script>
+<iframe id="nl-badge-frame" title="Powered by Netlify" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;color-scheme&quot; content=&quot;dark&quot;&gt;&lt;style&gt;
+    :root{--nl-vw:1600px;--nl-vh:1000px}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:transparent;overflow:hidden}
+    body{display:flex;align-items:flex-end;justify-content:flex-end;height:100vh;
+      padding:8px 18px 18px 8px;
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#f4f9f9;-webkit-font-smoothing:antialiased}
+    .nl-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:max-content;max-width:calc(var(--nl-vw,100vw) - 26px)}
+    button{font-family:inherit;cursor:pointer}
+    :focus-visible{outline:2px solid #32e6e2;outline-offset:2px;border-radius:6px}
+    .nl-icon-btn{position:relative;flex:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid transparent;background:transparent;color:#d5e3e6;transition:background .15s ease,color .15s ease}
+    .nl-icon-btn:hover{background:rgba(255,255,255,0.08);color:#f4f9f9}
+    .nl-tap::after{content:&quot;&quot;;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:max(100%,44px);height:max(100%,44px)}
+    @keyframes nl-rise{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+  
+      .nl-card{position:relative;display:none;width:min(340px,calc(var(--nl-vw,100vw) - 26px));max-height:calc(var(--nl-vh,100vh) - 84px);overflow-y:auto;background:linear-gradient(180deg,#132832 0%,#0e1e25 100%);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:18px;transform-origin:bottom right;animation:nl-rise .3s cubic-bezier(.34,1.4,.4,1) both}
+      .nl-card.open{display:block}
+      .nl-card-close{position:absolute;top:10px;right:10px}
+      .nl-card h2{margin:0;padding-right:30px;font-size:16px;font-weight:750;letter-spacing:-0.015em;line-height:1.35}
+      .nl-card h2 em{font-style:normal;background:linear-gradient(90deg,#32e6e2,#4d7cfe,#9a6bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+      .nl-card p{margin:8px 0 0;font-size:12.5px;color:#d5e3e6}
+      .nl-prompt{position:relative;margin-top:14px;background:#10222b;border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:10px 12px;transition:border-color .15s ease,box-shadow .15s ease}
+      .nl-prompt:focus-within{border-color:#05bdba;box-shadow:0 0 0 3px rgba(5,189,186,0.18)}
+      .nl-prompt textarea{display:block;width:100%;height:38px;resize:none;border:0;outline:none;background:transparent;color:#f4f9f9;font:inherit;font-size:13px;line-height:19px;padding:0 28px 0 0}
+      .nl-prompt textarea::placeholder{color:#a9bdc2}
+      .nl-send{position:absolute;right:9px;bottom:9px;width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:#05bdba;color:#02191b;transition:background .15s ease}
+      .nl-send:hover{background:#32e6e2}
+      @media (pointer: coarse){
+        .nl-prompt textarea{font-size:16px;line-height:21px;height:42px}
+      }
+      .nl-or{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:10.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#a9bdc2}
+      .nl-or::before,.nl-or::after{content:&quot;&quot;;flex:1;height:1px;background:rgba(255,255,255,0.09)}
+      .nl-drop{display:flex;align-items:center;justify-content:space-between;gap:6px;text-decoration:none;background:#1b3a45;border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;color:#cfe0e3;transition:background .15s ease,color .15s ease,border-color .15s ease}
+      .nl-drop:hover{background:#224753;color:#f4f9f9;border-color:rgba(50,230,226,0.3)}
+      .nl-drop .nl-arrow{transition:transform .18s cubic-bezier(.34,1.4,.4,1)}
+      .nl-drop:hover .nl-arrow{transform:translateX(3px)}
+      .nl-badge{display:flex;align-items:center;gap:9px;white-space:nowrap;border:1px solid rgba(255,255,255,0.09);background:linear-gradient(180deg,#142b34,#0e1e25);color:#f4f9f9;border-radius:999px;padding:9px 14px 9px 11px;font-size:13px;font-weight:600;letter-spacing:0.01em;transition:border-color .2s ease}
+      .nl-badge:hover{border-color:rgba(50,230,226,0.26)}
+      .nl-hide{display:block;width:100%;margin-top:10px;border:0;background:transparent;color:#a9bdc2;font-size:11.5px;font-weight:600;padding:4px;border-radius:8px;transition:color .15s ease}
+      .nl-hide:hover{color:#d5e3e6;text-decoration:underline}
+      .nl-badge-label{color:#d5e3e6;font-weight:500}
+      .nl-badge-brand{font-weight:750}
+    &lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+      &lt;div class=&quot;nl-wrap&quot;&gt;
+        &lt;section class=&quot;nl-card&quot; id=&quot;nl-card&quot; aria-label=&quot;Build your own site on Netlify&quot;&gt;
+          &lt;button type=&quot;button&quot; class=&quot;nl-icon-btn nl-tap nl-card-close&quot; id=&quot;nl-card-close&quot; aria-label=&quot;Close&quot;&gt;&lt;svg width=&quot;14&quot; height=&quot;14&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.9&quot; stroke-linecap=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+          &lt;h2&gt;&lt;em&gt;Build your own site with Netlify&lt;/em&gt;&lt;/h2&gt;
+          &lt;p&gt;Describe what you want, and an AI agent designs, builds and deploys it in minutes.&lt;/p&gt;
+          &lt;form class=&quot;nl-prompt&quot; action=&quot;https://app.netlify.com/start&quot; method=&quot;get&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
+            &lt;textarea name=&quot;prompt&quot; rows=&quot;2&quot; required maxlength=&quot;300&quot; autocomplete=&quot;off&quot;
+                      enterkeyhint=&quot;go&quot;
+                      placeholder=&quot;A shop for my handmade surfboards&amp;hellip;&quot;
+                      aria-label=&quot;Describe the site you want to build&quot;&gt;&lt;/textarea&gt;
+            &lt;button type=&quot;submit&quot; class=&quot;nl-send nl-tap&quot; aria-label=&quot;Build this site&quot;&gt;&lt;svg width=&quot;13&quot; height=&quot;13&quot; viewBox=&quot;0 0 16 16&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M8 12.75v-9.5M3.9 7.35 8 3.25l4.1 4.1&quot;/&gt;&lt;/svg&gt;&lt;/button&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_source&quot; value=&quot;netlify_badge&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_campaign&quot; value=&quot;loops&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_medium&quot; value=&quot;owned&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_content&quot; value=&quot;prompt&quot;&gt;
+            &lt;input type=&quot;hidden&quot; name=&quot;utm_id&quot; value=&quot;1af9a401-df26-45bb-a42d-2be8a5a37992&quot;&gt;
+            
+          &lt;/form&gt;
+          &lt;div class=&quot;nl-or&quot;&gt;&lt;span&gt;or&lt;/span&gt;&lt;/div&gt;
+          &lt;a class=&quot;nl-drop&quot; href=&quot;https://app.netlify.com/drop?utm_source=netlify_badge&amp;utm_campaign=loops&amp;utm_medium=owned&amp;utm_content=drop&amp;utm_id=1af9a401-df26-45bb-a42d-2be8a5a37992&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
+            &lt;span&gt;Drop a site you already have&lt;/span&gt;&lt;span class=&quot;nl-arrow&quot; aria-hidden=&quot;true&quot;&gt;&amp;rarr;&lt;/span&gt;
+          &lt;/a&gt;
+          
+        &lt;/section&gt;
+        &lt;button type=&quot;button&quot; class=&quot;nl-badge&quot; id=&quot;nl-badge&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;nl-card&quot;
+                aria-label=&quot;Powered by Netlify — build your own site&quot;&gt;
+          &lt;svg width=&quot;18&quot; height=&quot;18&quot; viewBox=&quot;0 0 32 32&quot; fill=&quot;none&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;path fill=&quot;#fff&quot; d=&quot;M17.9922 18.3225H14.005L13.6746 17.9921V14.005L14.005 13.6746H17.9922L18.3226 14.005V17.9921L17.9922 18.3225Z&quot;/&gt;
+    &lt;g fill=&quot;#05BDBA&quot;&gt;
+      &lt;path d=&quot;M9.6958 24.3311H9.35705L7.6661 22.6401V22.3041L10.2511 19.7164L12.042 19.7191L12.2808 19.9552V21.7461L9.6958 24.3311Z&quot;/&gt;
+      &lt;path d=&quot;M7.6661 9.69576V9.35701L9.35705 7.66606H9.6958L12.2808 10.2511V12.0392L12.042 12.2808H10.2511L7.6661 9.69576Z&quot;/&gt;
+      &lt;path d=&quot;M10.0457 17.4369H0.205466L0 17.2314V14.7658L0.205466 14.5603H10.0457L10.2511 14.7658V17.2314L10.0457 17.4369Z&quot;/&gt;
+      &lt;path d=&quot;M31.7945 17.4369H21.9544L21.7489 17.2314V14.7658L21.9544 14.5603H31.7945L32 14.7658V17.2314L31.7945 17.4369Z&quot;/&gt;
+      &lt;path d=&quot;M14.5631 10.0456V2.66547L14.7686 2.46001H17.2343L17.4396 2.66547V10.0456L17.2343 10.2511H14.7686L14.5631 10.0456Z&quot;/&gt;
+      &lt;path d=&quot;M14.5631 29.3316V21.9515L14.7686 21.746H17.2343L17.4396 21.9515V29.3316L17.2343 29.5371H14.7686L14.5631 29.3316Z&quot;/&gt;
+    &lt;/g&gt;&lt;/svg&gt;
+          &lt;span&gt;&lt;span class=&quot;nl-badge-label&quot;&gt;Powered by&lt;/span&gt; &lt;span class=&quot;nl-badge-brand&quot;&gt;Netlify&lt;/span&gt;&lt;/span&gt;
+        &lt;/button&gt;
+      &lt;/div&gt;
+      &lt;script&gt;
+        
+    function nlSend(){
+      var wrap=document.querySelector('.nl-wrap'),boxes=[];
+      for(var i=0;i&lt;wrap.children.length;i++){
+        var c=wrap.children[i];
+        if(!c.offsetWidth||!c.offsetHeight)continue;
+        boxes.push({x:c.offsetLeft-wrap.offsetLeft+8,
+                    y:c.offsetTop-wrap.offsetTop+8,
+                    w:c.offsetWidth,h:c.offsetHeight});
+      }
+      parent.postMessage({nlHud:'resize',
+        width:wrap.offsetWidth+26,
+        height:wrap.offsetHeight+26,
+        boxes:boxes},'*');
+    }
+    function nlSendSoon(){requestAnimationFrame(nlSend);}
+    window.addEventListener('load',nlSend);
+    window.addEventListener('message',function(e){
+      if(e.source!==parent||!e.data||e.data.nlHud!=='viewport')return;
+      var s=document.documentElement.style;
+      s.setProperty('--nl-vw',e.data.w+'px');
+      s.setProperty('--nl-vh',e.data.h+'px');
+      document.documentElement.classList.toggle('nl-narrow',e.data.w&lt;600);
+      nlSendSoon();
+    });
+    var nlCoarse=window.matchMedia('(pointer: coarse)').matches;
+    function nlSubmit(form){
+      if(form.requestSubmit)return form.requestSubmit();
+      if(form.checkValidity&amp;&amp;!form.checkValidity())
+        return form.reportValidity&amp;&amp;form.reportValidity();
+      form.submit();
+    }
+  
+        var badge=document.getElementById('nl-badge'),card=document.getElementById('nl-card'),
+            box=card.querySelector('textarea');
+        function setOpen(open){
+          card.classList.toggle('open',open);
+          badge.setAttribute('aria-expanded',open?'true':'false');
+          nlSendSoon();
+          if(open&amp;&amp;!nlCoarse)box.focus();
+        }
+        box.addEventListener('keydown',function(e){
+          if(e.key==='Enter'&amp;&amp;!e.shiftKey){e.preventDefault();nlSubmit(box.form);}
+        });
+        badge.addEventListener('click',function(){setOpen(!card.classList.contains('open'));});
+        document.getElementById('nl-card-close').addEventListener('click',function(){setOpen(false);badge.focus();});
+        document.addEventListener('keydown',function(e){
+          if(e.key==='Escape'&amp;&amp;card.classList.contains('open')){setOpen(false);badge.focus();}
+        });
+        card.addEventListener('click',function(e){
+          if(e.target.closest('#nl-hide'))parent.postMessage({nlHud:'state',value:'hidden'},'*');
+        });
+      &lt;/script&gt;
+    &lt;/body&gt;&lt;/html&gt;" style="position: fixed; bottom: 0px; right: 0px; border: 0px; margin: 0px; padding: 0px; background: transparent; color-scheme: dark; z-index: 2147483645; width: 197px; height: 64px; clip-path: path(&quot;M 3 3 H 184 V 51 H 3 Z&quot;);" data-nl-ready="1"></iframe></body></html>
