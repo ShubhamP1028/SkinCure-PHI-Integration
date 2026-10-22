@@ -62,6 +62,10 @@ OUTPUT_COLUMNS = [
     "source_page",
 ]
 
+# Set to numbers only if the PDFs contain Chrome's printed header/footer text.
+BODY_Y_MIN = None
+BODY_Y_MAX = None
+
 DATE_PATTERN = re.compile(r"^\d{2}/\d{2}/\d{4}$")
 DOB_PATTERN = re.compile(r"\bDOB\s+(\d{2}/\d{2}/\d{4})\b")
 MRN_PATTERN = re.compile(r"\bMRN\s+([A-Z]{2,}-\d+)\b")
@@ -134,9 +138,17 @@ def extract_pdf_records(pdf_path):
         for page_number, page in enumerate(pdf, start=1):
             words = page.get_text("words", sort=True)
 
-            # Remove page headings and footer content.
-            # The table body lies approximately between y=65 and y=570.
-            words = [w for w in words if 65 <= w[1] < 570]
+            # Optional fixed y-band (only needed for PDFs printed with Chrome's own
+            # date/URL header+footer). By default NO y filtering is applied: a
+            # hard-coded 65-570 band silently dropped every row near the top or
+            # bottom of each PDF page (e.g. 86 of 100 rows extracted). Page
+            # headings and the repeated table header sit above the first date
+            # anchor, so they are ignored automatically.
+            if BODY_Y_MIN is not None:
+                words = [w for w in words if w[1] >= BODY_Y_MIN]
+            if BODY_Y_MAX is not None:
+                words = [w for w in words if w[1] < BODY_Y_MAX]
+            page_bottom = BODY_Y_MAX if BODY_Y_MAX is not None else page.rect.height + 1
 
             # Each record begins with a date in the first column.
             anchors = []
@@ -147,8 +159,8 @@ def extract_pdf_records(pdf_path):
             anchors.sort(key=lambda item: item[0])
 
             for index, (start_y, date_text) in enumerate(anchors):
-                # Stop at the next record's date; last record ends at y=570.
-                end_y = anchors[index + 1][0] if index + 1 < len(anchors) else 570
+                # Stop at the next record's date; the last record runs to the page bottom.
+                end_y = anchors[index + 1][0] if index + 1 < len(anchors) else page_bottom
 
                 record_words = [w for w in words if start_y - 1 <= w[1] < end_y]
 
@@ -177,6 +189,21 @@ def extract_pdf_records(pdf_path):
                 records.append(row)
 
     return records
+
+
+def pdf_diagnostics(pdf_path):
+    """Print per-page date-anchor counts (= records detected) to explain row counts."""
+    total = 0
+    with pymupdf.open(str(pdf_path)) as pdf:
+        for n, page in enumerate(pdf, start=1):
+            words = page.get_text("words", sort=True)
+            ys = [w[1] for w in words if w[0] < 65 and DATE_PATTERN.fullmatch(w[4].strip())]
+            total += len(ys)
+            span = f"y {min(ys):.0f}-{max(ys):.0f}" if ys else "no records"
+            print(f"  [pdf] page {n}: size {page.rect.width:.0f}x{page.rect.height:.0f}, "
+                  f"{len(ys)} date anchors ({span})")
+    print(f"  [pdf] total date anchors: {total}")
+    return total
 
 
 # --------------------------------------------------
@@ -249,10 +276,6 @@ def run_checks(df):
             missing = int((series.isna() | (series.str.strip() == "")).sum())
         print(f"  {column}: {missing} missing values")
 
-
-# --------------------------------------------------
-# MAIN
-# --------------------------------------------------
 
 if __name__ == "__main__":
     pdf_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PDF
