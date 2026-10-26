@@ -38,11 +38,11 @@ import pytest
 from playwright.sync_api import expect, sync_playwright
 
 # pathology_pdf_to_pandas.py must sit in the same folder as this script
-from pathology_pdf_to_pandas_subscript import build_dataframe, run_checks
+from pathology_pdf_to_pyspark import build_dataframe, run_checks
 
 URL = "https://musical-biscuit-f1d2b1.netlify.app/"
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path('/Workspace/Users/shubham.pandey1@procdna.com/HANDSON SANDBOX').resolve()
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 SCREENSHOT_DIR = BASE_DIR / "screenshots"
 CREDENTIALS_FILE = BASE_DIR / "credentials.csv"   # or credentials.xlsx (needs openpyxl)
