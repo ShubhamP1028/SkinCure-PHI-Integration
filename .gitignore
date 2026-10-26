@@ -1,5 +1,7 @@
 /downloads/test files_21oct
 /screenshots
 /downloads/old
-
+.env
 .databricks
+DEV_NMSC_RuleUpdate
+DEV_NMSC_RuleUpdate.zip

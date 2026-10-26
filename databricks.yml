@@ -10,10 +10,10 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-2156656001216832.12.azuredatabricks.net
+      host: env.get('databricks_host')
 
   ## Optionally, there could be 'staging' or 'prod' targets here.
   #
   # prod:
   #   workspace:
-  #     host: https://adb-2156656001216832.12.azuredatabricks.net
+  #     host: env.get('databricks_host')

@@ -2,10 +2,11 @@ import os
 import re
 import pandas as pd
 from databricks.sdk import WorkspaceClient
-
+from dotenv import load_dotenv
 # Replace these with your actual Databricks credentials
-DATABRICKS_HOST = "https://adb-2156656001216832.12.azuredatabricks.net/" # Your Workspace URL
-DATABRICKS_TOKEN = "dapie5de1f11bf708028d1def686e493cfe0-3"          # Your Personal Access Token
+load_dotenv("../.env") 
+DATABRICKS_HOST = os.getenv('databricks_host')  # Your Workspace URL
+DATABRICKS_TOKEN = os.getenv('databricks_token')  # Your Personal Access Token
 
 # Initialize the Client explicitly passing the credentials
 w = WorkspaceClient(host=DATABRICKS_HOST, token=DATABRICKS_TOKEN)
