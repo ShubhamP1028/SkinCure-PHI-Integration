@@ -1,19 +1,77 @@
-﻿schema,table_pattern,column_name,dtype,tag
-comm_stage,"r'^user_\d{1,2}$'",result_date,date,
-comm_stage,"r'^user_\d{1,2}$'",patient_name,string,phi
-comm_stage,"r'^user_\d{1,2}$'",dob,date,phi
-comm_stage,"r'^user_\d{1,2}$'",mrn,string,phi
-comm_stage,"r'^user_\d{1,2}$'",facility,string,
-comm_stage,"r'^user_\d{1,2}$'",location,string,
-comm_stage,"r'^user_\d{1,2}$'",result,string,
-comm_stage,"r'^user_\d{1,2}$'",actions_and_plans,string,
-comm_stage,"r'^user_\d{1,2}$'",comments_assigned_to,string,
-comm_stage,"r'^user_\d{1,2}$'",flags,string,
-comm_stage,"r'^user_\d{1,2}$'",notifications,string,
-comm_stage,"r'^user_\d{1,2}$'",notes,string,
-comm_stage,"r'^user_\d{1,2}$'",patient_portal,string,
-comm_stage,"r'^user_\d{1,2}$'",results_processed,string,
-comm_stage,"r'^user_\d{1,2}$'",photos,string,phi
-comm_stage,"r'^user_\d{1,2}$'",source_file,string,
-comm_stage,"r'^user_\d{1,2}$'",username,string,
-comm_stage,"r'^user_\d{1,2}$'",downloaded_at,string,
+﻿schema,table_pattern,column_name,dtype,tag,layer
+comm_bronze,"r'^user_a\d{1,2}_comp$'",result_date,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",patient_name,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",dob,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",mrn,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",facility,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",location,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",result,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",actions_and_plans,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",comments_assigned_to,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",flags,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",notifications,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",notes,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",patient_portal,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",results_processed,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",photos,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",source_file,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",username,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",downloaded_at,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_comp$'",suffix,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",result_date,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",patient_name,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",dob,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",mrn,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",facility,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",location,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",result,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",actions_and_plans,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",comments_assigned_to,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",flags,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",notifications,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",notes,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",patient_portal,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",results_processed,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",photos,string,phi,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",source_file,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",username,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",downloaded_at,string,,raw
+comm_bronze,"r'^user_a\d{1,2}_pend$'",suffix,string,,raw
+comm_bronze,"r'^user_a\d{1,2}$'",result_date,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",patient_name,string,phi,stage
+comm_bronze,"r'^user_a\d{1,2}$'",dob,string,phi,stage
+comm_bronze,"r'^user_a\d{1,2}$'",mrn,string,phi,stage
+comm_bronze,"r'^user_a\d{1,2}$'",facility,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",location,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",result,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",actions_and_plans,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",comments_assigned_to,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",flags,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",notifications,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",notes,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",patient_portal,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",results_processed,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",photos,string,phi,stage
+comm_bronze,"r'^user_a\d{1,2}$'",source_file,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",username,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",downloaded_at,string,,stage
+comm_bronze,"r'^user_a\d{1,2}$'",suffix,string,,stage
+comm_silver,"r'^user_a\d{1,2}$'",result_date,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", patient_name,string,phi,silver
+comm_silver,"r'^user_a\d{1,2}$'", dob,string,phi,silver
+comm_silver,"r'^user_a\d{1,2}$'", mrn,string,phi,silver
+comm_silver,"r'^user_a\d{1,2}$'", facility,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", location,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", result,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", actions_and_plans,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", comments_assigned_to,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", flags,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", notifications,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", notes,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", patient_portal,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", results_processed,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'", photos,string,phi,silver
+comm_silver,"r'^user_a\d{1,2}$'",source_file,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'",username,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'",downloaded_at,string,,silver
+comm_silver,"r'^user_a\d{1,2}$'",suffix,string,,silver
